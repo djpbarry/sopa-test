@@ -11,6 +11,8 @@ dataset = spatialdata.read_zarr("demo.zarr")  # we can read the data back
 
 sopa.make_image_patches(dataset)
 
+sopa.settings.parallelization_backend = "dask"
+
 channels = sopa.utils.get_channel_names(dataset)
 
 print(channels)
