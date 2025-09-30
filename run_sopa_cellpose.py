@@ -3,7 +3,7 @@ import spatialdata
 
 print("Loading Zarr...")
 
-dataset = spatialdata.read_zarr("demo.zarr")  # we can read the data back
+dataset = spatialdata.read_zarr("./demo.zarr")  # we can read the data back
 
 print("Make image patches...")
 
