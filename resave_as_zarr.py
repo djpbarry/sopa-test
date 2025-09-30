@@ -1,6 +1,6 @@
 import sopa
 
-imagepath = "/nemo/stp/lm/inputs/lil/ForDave/EHP601_25_1_Stitched.ome.tif"
+imagepath = "/EHP601_25_1_Stitched_cropped.ome.tif"
 
 print("Opening image")
 
