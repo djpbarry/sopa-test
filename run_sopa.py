@@ -1,7 +1,7 @@
 import sopa
 import spatialdata
 
-imagepath = "/EHP601_25_1_Stitched_cropped.ome.tif"
+imagepath = "./EHP601_25_1_Stitched_cropped.tif"
 
 print("Opening image")
 
@@ -13,7 +13,7 @@ dataset.write("./demo.zarr", overwrite=True)
 
 print("Loading Zarr...")
 
-dataset = spatialdata.read_zarr("demo.zarr")  # we can read the data back
+dataset = spatialdata.read_zarr("./demo.zarr")  # we can read the data back
 
 print("Make image patches...")
 
@@ -29,8 +29,16 @@ channels = sopa.utils.get_channel_names(dataset)
 
 print(channels)
 
-print("Run cellpose...")
+print("Run stardist...")
 
-sopa.segmentation.cellpose(dataset, "DAPI (DAPI)", diameter=35, key_added="nuclei", gpu=True, overwrite=True)
+sopa.segmentation.stardist(dataset, model_type='2D_versatile_fluo', channels=str(channels[0]))
+
+print("Aggregating...")
+
+sopa.aggregate(dataset)
+
+print("Generating report...")
+
+sopa.io.write_report("report.html", dataset)
 
 print("Done")
