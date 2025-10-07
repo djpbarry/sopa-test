@@ -1,48 +1,49 @@
 import scanpy as sc
 import sopa
 import spatialdata
-import squidpy as sq
 
-#imagepath = "./EHP601_25_1_Stitched_cropped.tif"
+sc.settings.set_figure_params(figsize=(15, 15))
 
-#print("Opening image")
+# imagepath = "./EHP601_25_1_Stitched_cropped.tif"
 
-#dataset = sopa.io.ome_tif(imagepath, as_image=False)
+# print("Opening image")
 
-#print("Saving as Zarr...")
+# dataset = sopa.io.ome_tif(imagepath, as_image=False)
 
-#dataset.write("./demo.zarr", overwrite=True)
+# print("Saving as Zarr...")
+
+# dataset.write("./demo.zarr", overwrite=True)
 
 print("Loading Zarr...")
 
-dataset = spatialdata.read_zarr("./demo.zarr")  # we can read the data back
+dataset = spatialdata.read_zarr("./demo_2.zarr")  # we can read the data back
 
-#print("Make image patches...")
+# print("Make image patches...")
 
-#sopa.make_image_patches(dataset)
+# sopa.make_image_patches(dataset)
 
 print("Set dask backend...")
 
 sopa.settings.parallelization_backend = "dask"
 
-#print("Get channel names...")
+# print("Get channel names...")
 
-#channels = sopa.utils.get_channel_names(dataset)
+# channels = sopa.utils.get_channel_names(dataset)
 
-#print(channels)
+# print(channels)
 
-#print("Run stardist...")
+# print("Run stardist...")
 
-#sopa.segmentation.stardist(dataset, model_type='2D_versatile_fluo', channels=str(channels[0]))
+# sopa.segmentation.stardist(dataset, model_type='2D_versatile_fluo', channels=str(channels[0]))
 
-#print("Aggregating...")
+# print("Aggregating...")
 
-#sopa.aggregate(dataset)
+# sopa.aggregate(dataset)
 adata = dataset['table']
+adata.write_h5ad(filename='./ann_data.h5ad')
+# print("Generating report...")
 
-#print("Generating report...")
-
-#sopa.io.write_report("report.html", dataset)
+# sopa.io.write_report("report.html", dataset)
 
 # Step 1: Preprocess and cluster based on intensity data
 # Normalize the data
@@ -58,14 +59,18 @@ sc.tl.umap(adata)
 
 # Using the igraph implementation and a fixed number of iterations can be significantly faster,
 # especially for larger datasets
-sc.tl.leiden(adata, flavor="igraph", n_iterations=2)
+sc.tl.leiden(adata, flavor="igraph", n_iterations=-1, resolution=0.1)
 
-sc.pl.umap(adata, color=["leiden"])
+sc.pl.umap(adata, color=["leiden"], size=100)
 
-print("Saving as Zarr...")
+# print("Saving as Zarr...")
 
-dataset.write("./demo.zarr", overwrite=True)
+# dataset.write("./demo_2.zarr", overwrite=True)
 
-sq.pl.spatial_scatter(adata)
+sc.pl.embedding(
+    adata,
+    basis='spatial',
+    color='leiden',
+    size=100)
 
 print("Done")
